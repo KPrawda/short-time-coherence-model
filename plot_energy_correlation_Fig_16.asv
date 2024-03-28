@@ -7,7 +7,7 @@
 
 % Sebastian J. Schlecht, Sunday, 04 December 2022
 % new version 2024-01-26
-%% housekeeping
+%%
 clear; clc; close all;
 addpath '.\Resampled_RIRs\'
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 

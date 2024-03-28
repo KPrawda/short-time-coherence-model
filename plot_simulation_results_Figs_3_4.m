@@ -1,9 +1,16 @@
+%% plot short-time coherence simulation results - Figures 3 and 4 from the manuscript
+% complementary code for the publication 
+% "Short-time Coherence Between Repeated Room Impulse Response Measurements"
+% by K. Prawda, S. J. Schlecht, and V. Välimäki
+% submitted to the Journal of the Acoustical Society of America
+% on 22.03.2024
+
 % Sebastian J. Schlecht, Tuesday, 16. January 2024
 % test time-frequency correlation model based on normal TDoA distribution
+%% housekeeping
 clear; clc; close all;
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 %%
-
 fs = 48000*1;
 lenSeconds = 2;
 lenSamples = fs*lenSeconds;
@@ -82,12 +89,9 @@ cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 cMap2 = cMap2';
 col2 = [113, 62, 90]./255;
 %% the model of time-frequency correlation is based on the Gaussian TDoA
-
 magicFactor = 20; % might be influenced by the STFT parameters
 CovModel = exp( - magicFactor * (F .* sqrt(T).'*volatility).^2 );
-
-
-%%
+%% plot figure 3 
 % Freqs = (1:20)'*1000;
 T_ = [0.1:0.05:1].';
 CovMod = exp( - magicFactor * (F .* sqrt(T_).'*volatility).^2 );
@@ -112,13 +116,11 @@ clb.FontSize = 12;
 clb.Label.FontSize = 14;
 colormap(cMap2(1:length(T_), :));
 
-%% print figure 1
+%% print figure
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 print(f,'Simulations_frequency','-dpdf','-r0')
-
-
-%%
+%% plot filgure 4
 T__ = linspace(0,1,3000).';
 Freqs = (1:20)'*1000;
 CovFreq = exp( - magicFactor * (Freqs .* sqrt(T__).'*volatility).^2 );
@@ -142,7 +144,7 @@ clb.FontSize = 12;
 clb.Label.FontSize = 14;
 colormap(cMap2);
 
-%% print figure 1
+%% print figure 
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 print(f,'Simulations_time','-dpdf','-r0')

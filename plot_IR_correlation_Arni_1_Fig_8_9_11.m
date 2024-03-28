@@ -1,11 +1,18 @@
+%% plot figures 8, 9 and 11 from the manuscript
+% complementary code for the publication 
+% "Short-time Coherence Between Repeated Room Impulse Response Measurements"
+% by K. Prawda, S. J. Schlecht, and V. Välimäki
+% submitted to the Journal of the Acoustical Society of America
+% on 22.03.2024
+
 % Sebastian J. Schlecht, Sunday, 04 December 2022
 % new version 2024-01-26
 % updated by K. Prawda 12.02.2024
 % PLOT ONLY THE CORRELATION FOR ARNI 1 DATASET
-clear; clc; close all;
-% addpath 'C:\Users\prawdak1\Dropbox (Aalto)\Projects\Time-variance\TimeVaryingCorrelationRIR'
-addpath './RIRs/'
 
+%% housekeeping
+clear; clc; close all;
+addpath './RIRs/'
 %% Load measurements
 % in Arni for mic 1 to 5
 % direct_delay = [560   625   334   224   187]; % samples
@@ -80,7 +87,7 @@ cVec1 = linspace(0,1, numPlots);
 cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
-%% plot Arni 1 - measured, modeled, expected and so on 
+%% plot Arni 1 - measured, modeled, expected and so on, figure 8
 
 f=figure(1); clf; hold on
 subplot(2,1,1); hold on
@@ -141,7 +148,7 @@ set(gca, 'FontSize', 12)
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 % print(f,'Arni_different_correlations','-dpdf','-r0')
-%% plot Arni - different bands, modeled and measured coherence
+%% plot Arni - different bands, modeled and measured coherence, figure 9
 f = figure(2); clf; hold on
 
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
@@ -179,7 +186,7 @@ for i = 1:numRIR-1
         cor_PCC (:, :, i, it) = corrcoef([meas_cor(firstI:firstI+nc_len-1,i, it), corr_temp(firstI:firstI+nc_len-1)]);
     end
 end
-%% plot the model-signal correlation coefficient for the fits
+%% plot the model-signal correlation coefficient for the fits, figure 11
 f = figure(3); clf; hold on
 
 for i =1:numRIR-1 

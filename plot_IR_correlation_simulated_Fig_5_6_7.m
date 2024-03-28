@@ -1,63 +1,30 @@
+%% plot figures 5, 6, and 7 from the manuscript
+% complementary code for the publication 
+% "Short-time Coherence Between Repeated Room Impulse Response Measurements"
+% by K. Prawda, S. J. Schlecht, and V. Välimäki
+% submitted to the Journal of the Acoustical Society of America
+% on 22.03.2024
+
 % Sebastian J. Schlecht, Sunday, 04 December 2022
 % new version 2024-01-26
 % updated by K. Prawda 12.02.2024
 % PLOT ONLY THE SIMULATION RESULTS, FIGS 5 AND 6
-clear; clc; %close all;
-% addpath 'C:\Users\prawdak1\Dropbox (Aalto)\Projects\Time-variance\TimeVaryingCorrelationRIR'
-% addpath './RIRs/'
+%% houskeeping
+clear; clc; close all;
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 %% Load measurements
-% in Arni for mic 1 to 5
-% direct_delay = [560   625   334   224   187]; % samples
- 
 referenceRIR = 1;
 
-switch 4
-    case 1
-        numRIR = 5;
-        filename = 'IR_numClosed_50_numComb_5000_mic_1_sweep_%d.wav';
-        direct_delay = 560;
-        for itIR = 1:numRIR
-            [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
-        end
-        [~,onset] = max(abs(rir(:,1)));
-        fit_onset = floor(onset) - direct_delay;
-        minDB = 60;
-    case 2
-        numRIR = 5;
-        filename = 'IR_numClosed_2_numComb_200_mic_1_sweep_%d.wav';
-        direct_delay = 560;
-        for itIR = 1:numRIR
-            [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
-        end
-        [~,onset] = max(abs(rir(:,1)));
-        fit_onset = floor(onset) - direct_delay;
-        minDB = 60;
-    case 3
-        numRIR = 5;
-        filename = 'flutter4_setting2_IR_channel_4_sweep_%d.wav';
-        direct_delay = 560;
-        for itIR = 1:numRIR
-            [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
-        end
-        rir = rir(1:3*fs,:);
-        [~,onset] = max(abs(rir(:,1)));
-        fit_onset = floor(onset) - direct_delay;
-        minDB = 30;
-    case 4
-        numRIR = 2;
-        filename = 'IR_Synthetic_%d.wav';
-        for itIR = 1:numRIR
-            [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
-        end
-        direct_delay = 0;
-        fit_onset = 1;
-        minDB = 0;
+numRIR = 2;
+filename = 'IR_Synthetic_%d.wav';
+for itIR = 1:numRIR
+    [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
 end
-
+direct_delay = 0;
+fit_onset = 1;
+minDB = 0;
 
 rir = rir(fit_onset:end,:); % truncate to time of sound emittance
-
 %% bandpass filtering and correlation estimation
 winLen = 2^10;
 bandCenters = (1:20)*1000; % Hz
@@ -102,9 +69,7 @@ cVec1 = linspace(0,1, numPlots);
 cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
-
-
-%% plot simulated over time
+%% plot simulated over time, figure 5
 nIR = 1;
 licz = 1;
 f = figure(2); clf; hold on
@@ -131,7 +96,7 @@ set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 print(f,'Simulated_corr_over_time','-dpdf','-r0')
 
-%% plot simulated over frequencies
+%% plot simulated over frequencies, figure 6
 nIR = 1;
 licz = 1;
 f = figure(1); clf; hold on
@@ -183,13 +148,8 @@ box on
 f.Position(end) = 250;
 lgd  = legend('5 s', '10 s', '15 s', '20 s', 'location', 'south', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 4);
 lgd.Title.String = [ {'Time between measurements'}];
-%% print the correlation coefficient figure
-% set(f,'Units','Inches');
-% set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-% print(f,'corr_coef_Arni','-dpdf','-r0')
-% print(f,'corr_coef_Arni_FA','-dpdf','-r0')
 
-%% plot the correlation vs SNR 
+%% plot figure 7 - measured volatility vs target
 f = figure(4); clf; hold on
 
 plot(bandCenters./1000, volatility, 'LineWidth',2)

@@ -1,4 +1,11 @@
-%% plot room 
+%% plot room with colored speed of sound voxels - Figure 1 from the manuscript 
+%% and the resulting RIRs - Figure 2 from the manuscript
+% complementary code for the publication 
+% "Short-time Coherence Between Repeated Room Impulse Response Measurements"
+% by K. Prawda, S. J. Schlecht, and V. Välimäki
+% submitted to the Journal of the Acoustical Society of America
+% on 22.03.2024
+%% housekeeping
 clear all; close all; clc
 %% colors
 numPlots = 10;
@@ -11,13 +18,10 @@ cVec1 = linspace(0,1, numPlots);
 cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
-%%
+%% set x and y axes
 x=0:1:5;
 y = 0:1:3;
-
 [X,Y] = meshgrid(x,y);
-
-
 %% plot Fig. 1a
 rng(1) % for reproducibility
 T = 273.15 + 20 + 3*(rand(size(X))-0.5); % vary temperature by +- 1.5 deg C

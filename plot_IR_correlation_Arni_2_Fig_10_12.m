@@ -1,11 +1,19 @@
+%% plot figures 10 and 12 from the manuscript
+% complementary code for the publication 
+% "Short-time Coherence Between Repeated Room Impulse Response Measurements"
+% by K. Prawda, S. J. Schlecht, and V. Välimäki
+% submitted to the Journal of the Acoustical Society of America
+% on 22.03.2024
+
 % Sebastian J. Schlecht, Sunday, 04 December 2022
 % new version 2024-01-26
-clear; clc; %close all;
-% addpath 'C:\Users\prawdak1\Dropbox (Aalto)\Projects\Time-variance\TimeVaryingCorrelationRIR'
-addpath 'C:\Users\prawdak1\Dropbox (Aalto)\Projects\Time-variance\TimeVaryingCorrelationRIR\Up-to-date code\Resampled_RIRs\'
+% updated by K. Prawda 12.02.2024
+% PLOT ONLY THE CORRELATION FOR ARNI 2 DATASET
+%% housekeeping
+clear; clc; close all;
+addpath '.\Resampled_RIRs\'
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 %% Load measurements
- 
 referenceRIR = 1;
 
 filename = 'rec1_IR_ch_8_';
@@ -23,10 +31,7 @@ rir = rir(:, [1,its]);
 [~,onset] = max(abs(rir(:,1)));
 fit_onset = floor(onset) - direct_delay;
 
-
-
 rir = rir(fit_onset:end,:); % truncate to time of sound emittance
-
 %% bandpass filtering and correlation estimation
 winLen = 2^10;
 bandCenters = (1:19)*1000; % Hz
@@ -73,7 +78,7 @@ cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
 
-%% plot Arni 2 - different time separation, measured and modeled coherence
+%% plot Arni 2 - different time separation, measured and modeled coherence, figure 10
 f = figure(2); clf; hold on
 
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
@@ -114,7 +119,7 @@ for i = 1:numRIR-1
         cor_PCC (:, :, i, it) = corrcoef([meas_cor(firstI:firstI+nc_len-1,i, it).^2, corr_temp(firstI:firstI+nc_len-1)]);
     end
 end
-%% plot the model-signal correlation coefficient for the fits
+%% plot the model-signal correlation coefficient for the fits, figure 12
 f = figure(3); clf; hold on
 
 for i =[1 6 10]
@@ -134,8 +139,6 @@ lgd.Title.String = [ {'Time between measurements'}];
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 % print(f,'corr_coef_Arni_FA','-dpdf','-r0')
-
-
 %% find divergence
 function [volatility] = findVolatility(time_cor, meas_cor, mask, snr_cor, fb)
 % Fit the volatility 

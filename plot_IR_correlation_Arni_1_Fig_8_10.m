@@ -35,9 +35,7 @@ switch 1
         minDB = 60;
 end
 
-
 rir = rir(fit_onset:end,:); % truncate to time of sound emittance
-
 %% bandpass filtering and correlation estimation
 winLen = 2^10;
 bandCenters = (1:19)*1000; % Hz
@@ -65,19 +63,12 @@ time_cor = (1:size(cor,1)).'/fs; % seconds
 
 %% find divergence
 volatility = findVolatility(time_cor, meas_cor, mask, r_snr, bandCenters);
-%%
-
+%% coherence model
 for itIR = 1:numRIR-1
     for bandIt = 1:numel(bandCenters)
         pred_cor_resample(:,itIR,bandIt) = correlationModel(bandCenters(bandIt), time_cor, volatility(itIR,bandIt));
     end
 end
-
-
-
-
-
-
 %% colors
 numPlots = numRIR-1;
 
@@ -89,7 +80,7 @@ cVec1 = linspace(0,1, numPlots);
 cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
-%% plot Arni - measured, modeled, expected and so on 
+%% plot Arni 1 - measured, modeled, expected and so on 
 
 f=figure(1); clf; hold on
 subplot(2,1,1); hold on
@@ -116,8 +107,7 @@ set(gca, 'ytick', .9:.02:1, 'xtick', 0:100:600, 'FontSize',12)
 lgd  = legend('$\widehat{\rho}^{~2}_{x, x^\prime}$', '$\widehat{\rho}^{~2}_{\textup{SNR}}$', '$R^2_{\vartheta}(t, f)$', '$\widehat{\rho}^{~2}_{\textup{SNR}} \times R^2_{\vartheta}(t, f)$', 'location', 'southwest', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 2);
 box on
 grid on
-%% 
-
+%% plot SNR
 subplot(2,1,2);  hold on
 b = 10;
 nIR = 1;
@@ -151,20 +141,16 @@ set(gca, 'FontSize', 12)
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 % print(f,'Arni_different_correlations','-dpdf','-r0')
-
-
-%% plot Arni - different bands
-
+%% plot Arni - different bands, modeled and measured coherence
 f = figure(2); clf; hold on
 
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 band =[10 19];
- licz = 1
-for b = band 
-   
+ licz = 1;
+for b = band   
     plot( 1000*time_cor, squeeze(meas_cor(:,nIR,b)).^2 ,'-', 'color', cMap2(:,licz), 'LineWidth',1.2)
     plot(  1000*time_cor, (squeeze(r_snr(:, nIR, b)).*pred_cor_resample(:,nIR, b)).^2 ,'--' ,'color', cMap2(:, licz), 'LineWidth',3)
-    licz = licz+3
+    licz = licz+3;
 end
 
 ylim([-0.3 1.03])
@@ -213,7 +199,6 @@ lgd.Title.String = [ {'Time between measurements'}];
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 % print(f,'corr_coef_Arni','-dpdf','-r0')
-% print(f,'corr_coef_Arni_FA','-dpdf','-r0')
 %% find divergence
 function [volatility] = findVolatility(time_cor, meas_cor, mask, snr_cor, fb)
 % Fit the volatility 

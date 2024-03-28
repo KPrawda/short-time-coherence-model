@@ -5,38 +5,24 @@ clear; clc; %close all;
 addpath 'C:\Users\prawdak1\Dropbox (Aalto)\Projects\Time-variance\TimeVaryingCorrelationRIR\Up-to-date code\Resampled_RIRs\'
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 %% Load measurements
-% in Arni for mic 1 to 5
-% direct_delay = [560   625   334   224   187]; % samples
  
 referenceRIR = 1;
 
-switch 2
-    case 1
-        numRIR = 5;
-        filename = 'IR_numClosed_50_numComb_5000_mic_1_sweep_%d.wav';
-        direct_delay = 560;
-        for itIR = 1:numRIR
-            [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
-        end
-        [~,onset] = max(abs(rir(:,1)));
-        fit_onset = floor(onset) - direct_delay;
-        minDB = 60;
-    case 2  
-        filename = 'rec1_IR_ch_8_';
-        minDB = 30;
-        its =  60:60:600;
-        numRIR = length(its)+1;
-        direct_delay = 560;
-        [rir(:, 1), fs] = audioread('rec1_IR_ch_8_1.wav');
-        for it = its
-            temp = audioread(sprintf('%s%d%s',filename,it, '_resampled.wav'));
-            rir(1:length(temp),it) = temp;
-        
-        end
-        rir = rir(:, [1,its]);
-        [~,onset] = max(abs(rir(:,1)));
-        fit_onset = floor(onset) - direct_delay;
+filename = 'rec1_IR_ch_8_';
+minDB = 30;
+its =  60:60:600;
+numRIR = length(its)+1;
+direct_delay = 560;
+[rir(:, 1), fs] = audioread('rec1_IR_ch_8_1.wav');
+for it = its
+    temp = audioread(sprintf('%s%d%s',filename,it, '_resampled.wav'));
+    rir(1:length(temp),it) = temp;
+
 end
+rir = rir(:, [1,its]);
+[~,onset] = max(abs(rir(:,1)));
+fit_onset = floor(onset) - direct_delay;
+
 
 
 rir = rir(fit_onset:end,:); % truncate to time of sound emittance
@@ -68,18 +54,12 @@ time_cor = (1:size(cor,1)).'/fs; % seconds
 
 %% find divergence
 volatility = findVolatility(time_cor, meas_cor, mask, r_snr, bandCenters);
-%%
-
+%% coherence model
 for itIR = 1:numRIR-1
     for bandIt = 1:numel(bandCenters)
         pred_cor_resample(:,itIR,bandIt) = correlationModel(bandCenters(bandIt), time_cor, volatility(itIR,bandIt));
     end
 end
-
-
-
-
-
 
 %% colors
 numPlots = numRIR-1;
@@ -93,27 +73,26 @@ cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
 
-%% plot Arni - different bands
-
+%% plot Arni 2 - different time separation, measured and modeled coherence
 f = figure(2); clf; hold on
 
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
-band =18;
-for b = band 
-     for i = [1 6 10]
-        plot( 1000* time_cor, squeeze(meas_cor(:,i,b)).^2 ,'-', 'color', cMap2(:,i), 'LineWidth',2)
-    
-        plot(  1000*time_cor, (squeeze(r_snr(:, i, b)).*pred_cor_resample(:,i, b)).^2,'--' ,'color', cMap2(:, i), 'LineWidth',2, 'HandleVisibility','off')   
-     end    
-end
+
+b =18; % which band to plot
+
+ for i = [1 6 10] % which RIRs to plot
+    plot( 1000* time_cor, squeeze(meas_cor(:,i,b)).^2 ,'-', 'color', cMap2(:,i), 'LineWidth',2)
+    plot(  1000*time_cor, (squeeze(r_snr(:, i, b)).*pred_cor_resample(:,i, b)).^2,'--' ,'color', cMap2(:, i), 'LineWidth',2, 'HandleVisibility','off')   
+ end    
+
 
 ylim([0.7 1.03])
-xlim([0 400])
+xlim([0 200])
 xlabel('Time (ms)', 'Interpreter','latex', 'FontSize',12)
 ylabel('Coherence', 'Interpreter','latex', 'FontSize',12)
-% set(gca, 'XTick', 0:50:200, 'fontsize', 12)
-% lgd  = legend('5 min', '30 min', '50 min',  'location', 'southwest', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 3);
-% lgd.Title.String = [ {'Time between measurements'}];%$j-i$';
+set(gca, 'XTick', 0:50:200, 'fontsize', 12)
+lgd  = legend('5 min', '30 min', '50 min',  'location', 'southwest', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 3);
+lgd.Title.String = [ {'Time between measurements'}];%$j-i$';
 box on
 grid on
 f.Position(end) = 320;
@@ -138,7 +117,7 @@ end
 %% plot the model-signal correlation coefficient for the fits
 f = figure(3); clf; hold on
 
-for i =[1 6 10];%1:numRIR-1 
+for i =[1 6 10]
     plot(bandCenters, squeeze(cor_PCC(1,2,i, :)), '-.o', 'color', cMap2(:, i), 'LineWidth',1, 'MarkerFaceColor',cMap2(:, i))
 end 
 

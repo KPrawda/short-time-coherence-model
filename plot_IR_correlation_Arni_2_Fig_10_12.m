@@ -11,7 +11,7 @@
 % PLOT ONLY THE CORRELATION FOR ARNI 2 DATASET
 %% housekeeping
 clear; clc; close all;
-addpath '.\Resampled_RIRs\'
+addpath(fullfile(pwd, 'Resampled_RIRs'));
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 %% Load measurements
 referenceRIR = 1;

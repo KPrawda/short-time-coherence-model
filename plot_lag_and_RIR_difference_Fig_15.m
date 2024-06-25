@@ -7,7 +7,7 @@
 %% housekeeping 
 clear all; close all; clc
 set(groot,'defaultAxesTickLabelInterpreter','latex');
-addpath('.\RIRs')
+addpath(fullfile(pwd, 'RIRs'));
 %% colors
 numPlots =4 ;
 
@@ -21,7 +21,7 @@ cMap2 = [cVec1; col1(2)*colorMod; col1(3)*colorMod];
 
 col2 = [113, 62, 90]./255;
 %% read the corresponding IR from the Arni database
-folder='.\RIRs';
+folder='RIRs';
 audio_files=dir(fullfile(folder,'*.wav'));
 
 file = cell(numel(audio_files),1);

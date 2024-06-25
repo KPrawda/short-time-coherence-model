@@ -12,7 +12,7 @@
 
 %% housekeeping
 clear; clc; close all;
-addpath './RIRs/'
+addpath(fullfile(pwd, 'RIRs'));
 %% Load measurements
 % in Arni for mic 1 to 5
 % direct_delay = [560   625   334   224   187]; % samples

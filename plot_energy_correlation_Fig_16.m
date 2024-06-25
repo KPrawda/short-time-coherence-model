@@ -9,7 +9,7 @@
 % new version 2024-01-26
 %% housekeeping
 clear; clc; close all;
-addpath '.\Resampled_RIRs\'
+addpath(fullfile(pwd, 'Resampled_RIRs'));
 set(groot,'defaultAxesTickLabelInterpreter','latex'); 
 %% Load measurements
  
@@ -24,8 +24,8 @@ direct_delay = 560;
 for it = its
     temp = audioread(sprintf('%s%d%s',filename,it, '_resampled.wav'));
     rir(1:length(temp),it) = temp;
-
 end
+
 rir = rir(:, [1,its]);
 [~,onset] = max(abs(rir(:,1)));
 fit_onset = floor(onset) - direct_delay;

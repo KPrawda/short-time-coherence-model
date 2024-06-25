@@ -90,10 +90,10 @@ box on
 
 
 lgd  = legend('5 s',  '15 s',  'location', 'southwest', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 2);
-lgd.Title.String = [ {'Time between measurements'}];%$j-i$';
+lgd.Title.String = {'Time between measurements'};%$j-i$';
 
 % plot thr RIR difference in dB
-time = [0:length(ir)-1]./fs; % time vector for the original RIRs
+time = (0:length(ir)-1)./fs; % time vector for the original RIRs
 
 subplot(2,1,2); hold on
 plot(1000*time, db(ir(:, 1)./max(abs(ir(:, 1)))-ir(:, 4)./max(abs(ir(:, 4)))), 'Color', cMap2(:, 3), 'LineWidth',1 )
@@ -106,7 +106,7 @@ set(gca,  'FontSize',12)
 xlabel('Time (ms)', 'Interpreter','latex', 'FontSize',12)
 ylabel('RIR difference (dB)', 'Interpreter','latex', 'FontSize',12)
 lgd  = legend('5 s',  '15 s',  'location', 'northeast', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 2);
-lgd.Title.String = [ {'Time between measurements'}];%$j-i$';
+lgd.Title.String = {'Time between measurements'};%$j-i$';
 %% print the figure
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])

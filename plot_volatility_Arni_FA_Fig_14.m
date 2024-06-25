@@ -44,7 +44,7 @@ xlim([-50 numMeas*5+50]./60)
 box on
 set(gca, 'fontsize', 12)
 xlabel('Time between measurements (min)', 'Interpreter','latex', 'fontsize', 12)
-ylabel('Volatility $(s/\sqrt{s})$', 'Interpreter','latex', 'fontsize', 12);
+ylabel('Volatility $\vartheta\,(\textrm{s}/\sqrt{\textrm{s}})$', 'Interpreter','latex', 'fontsize', 12);
 
 colormap(cMap2(:, 1:end-1)')
 caxis([10 18])

@@ -7,7 +7,7 @@
 
 % Sebastian J. Schlecht, Sunday, 04 December 2022
 % new version 2024-01-26
-% updated by K. Prawda 12.02.2024
+% updated by K. Prawda 12.02.2024 and 7.06.2024
 % PLOT ONLY THE CORRELATION FOR ARNI 2 DATASET
 %% housekeeping
 clear; clc; close all;
@@ -50,10 +50,10 @@ for bandIt = 1:numel(bandCenters)
     meas_cor(:,:,bandIt) = cor;
     meas_energy_ref(:,:,bandIt) = e_ref;
 
-    % find valid part
+    % only estimate volatility for the part of IR with sufficiently
+    % high energy
     energyDB = db(mean(energy,2));
     mask(:, bandIt) = energyDB > min(energyDB) + minDB ;
-%         mask(round(fs*0.2):end,bandIt)=0;
 end
 time_cor = (1:size(cor,1)).'/fs; % seconds
 
@@ -161,7 +161,7 @@ for itIR = 1:numIR
         F = fb(itBands);
 
         % l1 loss
-        loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor));
+        loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor)); % eq. (19) from the paper
 
         % do the fitting in log(volatility) for better scaling
         volatilityMin = -50;
@@ -170,13 +170,6 @@ for itIR = 1:numIR
         vol = exp(fminbnd(loss_fun,volatilityMin,volatilityMax,options));
 
         volatility(itIR,itBands) = vol;
-
-%         figure; hold on;
-%         plot(T,cor)
-%         plot(T,correlationModel(F,T,vol).*snr);
-%         plot(T, m(m))
-        
-        ok = 1;
     end
 end
 end

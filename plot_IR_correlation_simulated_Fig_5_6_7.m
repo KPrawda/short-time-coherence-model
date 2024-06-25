@@ -16,7 +16,7 @@ set(groot,'defaultAxesTickLabelInterpreter','latex');
 referenceRIR = 1;
 
 numRIR = 2;
-filename = 'IR_Synthetic_%d.wav';
+filename = 'IR_Synthetic_positive_%d.wav';
 for itIR = 1:numRIR
     [rir(:,itIR),fs] = audioread(sprintf(filename,itIR));
 end
@@ -87,7 +87,7 @@ set(gca, 'fontsize', 12)
 ylim([0.55 1.01])
 xlim(1000*[0 1]);
 xlabel('Time (ms)', 'Interpreter','latex', 'FontSize',12)
-ylabel('$R^2_\vartheta (\tau, f)$', 'Interpreter','latex')
+ylabel('Coherence', 'Interpreter','latex')
 lgd  = legend('5 kHz', '10 kHz','20 kHz','location', 'southwest', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 1);
 box on
 grid on
@@ -113,7 +113,7 @@ set(gca, 'fontsize', 12)
 % ylim([-0.05 1.03])
 xlim([1 20]);
 xlabel('Frequency (kHz)', 'Interpreter','latex', 'FontSize',12)
-ylabel('$R^2_\vartheta (\tau, f)$', 'Interpreter','latex')
+ylabel('Coherence', 'Interpreter','latex')
 lgd  = legend('250 ms', '500 ms','1000 ms','location', 'southwest', 'interpreter', 'latex', 'fontsize', 12, 'numcolumns', 1);
 box on
 grid on
@@ -151,19 +151,25 @@ lgd.Title.String = [ {'Time between measurements'}];
 
 %% plot figure 7 - measured volatility vs target
 f = figure(4); clf; hold on
-
+fill([1 20, 20, 1], 5*10^-6.*[0.95, 0.95, 1.05, 1.05], [.5 .5 .5 ], 'EdgeColor','none', 'FaceAlpha',.15, 'HandleVisibility','off') 
 plot(bandCenters./1000, volatility, 'LineWidth',2)
 
 xlabel('Frequency (kHz)', 'Interpreter','latex', 'FontSize',12)
-ylabel('$\vartheta (s/\sqrt{s})$', 'Interpreter','latex', 'FontSize',12)
+ylabel('$\vartheta (\textrm{s}/\sqrt{\textrm{s}})$', 'Interpreter','latex', 'FontSize',12)
 
 yline(5*10^-6, '--','LineWidth',2)
+
 xlim([1 20])
-% ylim([2.75 3.08]*10^-5)
+ylim(5*10^-6.*[0.90,  1.07])
+
+% for the legend ONLY
+fill([inf inf], [inf inf], [.5 .5 .5 ], 'EdgeColor','none', 'FaceAlpha',.25) 
+
+
 grid on
 box on
 set(gca, 'FontSize', 12, 'xtick', [1 2:2:20])
-legend('Estimated', 'Ground truth', 'Interpreter','latex', 'fontsize', 12, 'location', 'northeast', 'numcolumns',3)
+legend('Estimated', 'Ground truth', 'Ground truth $\pm5\%$', 'Ground truth $\pm5\%$', 'Interpreter','latex', 'fontsize', 12, 'location', 'southeast', 'numcolumns',2)
 
 f.Position(end) = 270;
 %% print the correlation vs SNR figure

@@ -29,8 +29,8 @@ var_echo_times = mean_echo_times + toaVariation;
 
 var_echo_times = clip(var_echo_times, [0 lenSeconds]);
 
-% generate signs
-echo_amps = 2*round(rand(num_echoes,1))-1;
+% generate signs (only positive)
+echo_amps = round(rand(num_echoes,1));%2*round(rand(num_echoes,1))-1;
 
 % synthesis with fractional delays and amplitudes
 for it = 1:num_rirs
@@ -40,8 +40,8 @@ end
 % audiowrite
 rirPeakValue = max(abs(rir(:)));
 for it = 1:size(rir,2)
-    filename = 'IR_Synthetic_%d.wav';
-    audiowrite(sprintf(filename,it),rir(:,it) ./ rirPeakValue * 0.99,fs);
+    filename = 'IR_Synthetic_positive_%d.wav';
+    % audiowrite(sprintf(filename,it),rir(:,it) ./ rirPeakValue * 0.99,fs);
 end
 
 %% time-frequency correlation based on STFT
@@ -119,7 +119,7 @@ colormap(cMap2(1:length(T_), :));
 %% print figure
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-print(f,'Simulations_frequency','-dpdf','-r0')
+% print(f,'Simulations_frequency','-dpdf','-r0')
 %% plot filgure 4
 T__ = linspace(0,1,3000).';
 Freqs = (1:20)'*1000;
@@ -147,7 +147,7 @@ colormap(cMap2);
 %% print figure 
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-print(f,'Simulations_time','-dpdf','-r0')
+% print(f,'Simulations_time','-dpdf','-r0')
 
 %% Simulate averaging process
 

@@ -61,10 +61,10 @@ for bandIt = 1:numel(bandCenters)
     meas_cor(:,:,bandIt) = cor;
     meas_energy_ref(:,:,bandIt) = e_ref;
 
-    % find valid part
+    % only estimate volatility for the part of IR with sufficiently
+    % high energy
     energyDB = db(mean(energy,2));
     mask(:, bandIt) = energyDB > min(energyDB) + minDB ;
-    %     mask(round(fs*0.150):end,bandIt)=0;
 end
 time_cor = (1:size(cor,1)).'/fs; % seconds
 
@@ -137,13 +137,12 @@ plot(time_cor*1000, 100*mask(:, b)-20,'--','color', 'k' ,'LineWidth',0.5, 'Handl
 xlabel('Time (ms)', 'Interpreter','latex', 'FontSize',12)
 ylabel('SNR (dB)', 'Interpreter','latex', 'FontSize',12)
 
-% xline(27)
+
 xlim([0 500])
 ylim([-5  75])
 grid on
 box on
 set(gca, 'FontSize', 12)
-% legend('$\widehat{\rho}_{x, x^prime}$', 'SNR', 'Interpreter','latex', 'fontsize', 12, 'location', 'southwest', 'numcolumns',3)
 %% print figure 1
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
@@ -173,7 +172,6 @@ f.Position(end) = 320;
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 % print(f,'Arni_correlation_Jan2024','-dpdf','-r0')
-
 %% get the correlation coefficient between the calculated correlation curves and the fitted curves
 cor_PCC = zeros(2,2,numRIR-1,numel(bandCenters));
 for i = 1:numRIR-1
@@ -215,9 +213,10 @@ function [volatility] = findVolatility(time_cor, meas_cor, mask, snr_cor, fb)
 % - mask = high energy region
 % - snr_cor = expected correlation based on SNR
 % - fb = center frequencies
-% - fs = sampling frequencies
 
 [numT, numIR, numBands] = size(meas_cor);
+volatility = zeros(numIR,numBands);
+
 for itIR = 1:numIR
     for itBands = 1:numBands
         m = mask(:,itBands);
@@ -228,7 +227,7 @@ for itIR = 1:numIR
         F = fb(itBands);
 
         % l1 loss
-        loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor));
+        loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor)); % eq. (19) from the paper
 
         % do the fitting in log(volatility) for better scaling
         volatilityMin = -50;
@@ -237,13 +236,6 @@ for itIR = 1:numIR
         vol = exp(fminbnd(loss_fun,volatilityMin,volatilityMax,options));
 
         volatility(itIR,itBands) = vol;
-
-%         figure; hold on;
-%         plot(T,cor)
-%         plot(T,correlationModel(F,T,vol).*snr);
-%         plot(T, m(m))
-%         
-        ok = 1;
     end
 end
 end
@@ -251,7 +243,7 @@ end
 %% correlation model
 function [pred_cor,pred_toastd] = correlationModel(F,T,volatility)
     magicFactor = 20;
-    pred_cor = exp( - magicFactor * (F .* sqrt(T)*volatility).^2 );
+    pred_cor = exp( - magicFactor * (F .* sqrt(T)*volatility).^2 ); % eq. (14) from the paper    
     pred_toastd = T*volatility;
 end
 
@@ -277,17 +269,17 @@ win = win / sum(win);
 mov = @(x) conv(x,win,'same');
 
 for it = 1:num_rirs
-    r_cov(:,it) = mov(irRef.*ir(:,it));
+    r_cov(:,it) = mov(irRef.*ir(:,it)); % numerator of eq. (2)
     e_sig(:,it) = mov(ir(:,it).^2);
 end
 e_ref =  mov(irRef.^2);
-r_corr = r_cov./sqrt(e_sig.*e_ref);
+r_corr = r_cov./sqrt(e_sig.*e_ref);     % eq. (2)
 
 % estimate rir energy
 e_rir = e_sig - noiseLevel.^2 * 1;
 
 % SNR-based correlation
-r_snr = e_rir ./ e_sig;
+r_snr = e_rir ./ e_sig;                 % eq. (4)
 
 
 end

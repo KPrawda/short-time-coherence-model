@@ -80,9 +80,9 @@ axis off
 % color option and colorbar
 colormap(cMap2.')
 clb =  colorbar('location', 'southoutside');
-caxis([332.888 332.892])
+clim([332.884 332.896])
 clb.TickLabelInterpreter = 'latex';
-clb.Ticks = [332.888 332.890 332.892];
+clb.Ticks = [332.885 332.890 332.895];
 clb.Label.String = [{'Speed of sound (m/s)'},{'(a)'}];
 clb.Label.Interpreter = 'Latex';
 clb.FontSize = 14;
@@ -92,7 +92,7 @@ set(gca,'ycolor','w', 'xcolor','w')
 
 %% plot Fig. 1b
 rng(10) % for reproducibility
-C_ =C +  0.01*(2*rand(size(X))-1); % vari the speed of sound by a random value
+C_ =C +  0.005*(2*rand(size(X))-1); % vary the speed of sound by a random value
 
 subplot(1,2,2); 
 hold on
@@ -148,9 +148,9 @@ axis off
 % colormap and colorbar
 colormap(cMap2.')
 clb =  colorbar('location', 'southoutside');
-caxis([332.880 332.899])
+clim([332.884 332.896])
 clb.TickLabelInterpreter = 'latex';
-clb.Ticks = [332.880 332.890 332.899];
+clb.Ticks = [332.885 332.890 332.895];
 clb.Label.String = [{'Speed of sound (m/s)'},{'(b)'}];
 clb.Label.FontSize = 14;
 clb.Label.Interpreter = 'Latex';
@@ -203,4 +203,4 @@ ax.XTick = [];
 set(f,'Units','Inches');
 pos = get(f,'Position');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-print(f,'IR_difference','-dpdf','-r0')
+% print(f,'IR_difference','-dpdf','-r0')

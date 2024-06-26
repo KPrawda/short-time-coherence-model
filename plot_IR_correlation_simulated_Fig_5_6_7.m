@@ -94,7 +94,7 @@ grid on
 %% print figure
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-print(f,'Simulated_corr_over_time','-dpdf','-r0')
+% print(f,'Simulated_corr_over_time','-dpdf','-r0')
 
 %% plot simulated over frequencies, figure 6
 nIR = 1;
@@ -122,7 +122,7 @@ grid on
 %% print figure
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-print(f,'Simulated_corr_over_frequency','-dpdf','-r0')
+% print(f,'Simulated_corr_over_frequency','-dpdf','-r0')
 
 %% get the correlation coefficient between the calculated correlation curves and the fitted curves
 cor_PCC = zeros(2,2,numRIR-1,numel(bandCenters));
@@ -175,90 +175,4 @@ f.Position(end) = 270;
 %% print the correlation vs SNR figure
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
-print(f,'volatility_simulated','-dpdf','-r0')
-%% find divergence
-function [volatility] = findVolatility(time_cor, meas_cor, mask, snr_cor, fb)
-% Fit the volatility 
-% Input:
-% - time_cor = time in seconds of meas_cor
-% - meas_cor = measured correlation between measurements
-% - mask = high energy region
-% - snr_cor = expected correlation based on SNR
-% - fb = center frequencies
-% - fs = sampling frequencies
-
-[numT, numIR, numBands] = size(meas_cor);
-for itIR = 1:numIR
-    for itBands = 1:numBands
-        m = mask(:,itBands);
-
-        T = time_cor(m);
-        cor = meas_cor(m,itIR,itBands);
-        snr = ones(size(snr_cor(m,itIR,itBands)));
-        F = fb(itBands);
-
-        % l1 loss
-        loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor));
-
-        % do the fitting in log(volatility) for better scaling
-        volatilityMin = -50;
-        volatilityMax = -3;
-        options = optimset('TolX',0.01);
-        %%
-        vol = exp(fminbnd(loss_fun,volatilityMin,volatilityMax,options));
-        %%
-        volatility(itIR,itBands) = vol;
-
-%         figure; hold on;
-%         plot(T,cor)
-%         plot(T,correlationModel(F,T,vol).*snr);
-%         plot(T, m(m))
-%         
-        ok = 1;
-    end
-end
-end
-
-%% correlation model
-function [pred_cor,pred_toastd] = correlationModel(F,T,volatility)
-    magicFactor = 20;
-    pred_cor = exp( - magicFactor * (F .* sqrt(T)*volatility).^2 );
-    pred_toastd = T*volatility;
-end
-
-
-%% sliding correlation
-function [r_corr, e_sig, r_snr, e_ref] = slidingCorrelation(irRef, ir, winLen)
-
-num_rirs = size(ir,2);
-
-% estimate noise level
-noise = ir(round(0.9*end):end,:);
-noiseLevel = sqrt(mean(noise.^2));
-
-disp(noiseLevel)
-
-% compute correlation
-mov = @(x) movsum(x,winLen)./winLen;
-
-% win = hann(winLen);
-win = rectwin(winLen);
-% win = blackman(winLen);
-win = win / sum(win);
-mov = @(x) conv(x,win,'same');
-
-for it = 1:num_rirs
-    r_cov(:,it) = mov(irRef.*ir(:,it));
-    e_sig(:,it) = mov(ir(:,it).^2);
-end
-e_ref =  mov(irRef.^2);
-r_corr = r_cov./sqrt(e_sig.*e_ref);
-
-% estimate rir energy
-e_rir = e_sig - noiseLevel.^2 * 1;
-
-% SNR-based correlation
-r_snr = e_rir ./ e_sig;
-
-
-end
+% print(f,'volatility_simulated','-dpdf','-r0')

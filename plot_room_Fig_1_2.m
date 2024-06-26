@@ -43,7 +43,7 @@ plot3([5 5],[0 3],[1 1], 'k', 'linewidth', 2)
 
 %Receiver
 plot3(4,1, 400, 'wo' , 'LineWidth',2, 'MarkerSize',10, 'MarkerFaceColor','w') % plot receiver 
-text(4.2 ,1, 1.1, 'R', 'color', 'w', 'Interpreter','latex', 'FontSize',14)% letter R by the receiver
+text(4.2 ,1, 400, 'R', 'color', 'w', 'Interpreter','latex', 'FontSize',14)% letter R by the receiver
 
 %Real source
 scatter3(1,2, 400,150, 'k','filled', 'o', 'markerfacealpha', 1)% plot real sound source
@@ -109,7 +109,7 @@ plot3([5 5],[0 3],[1 1], 'k', 'linewidth', 2)
 
 % Receiver
 plot3(4,1, 400, 'wo' , 'LineWidth',2, 'MarkerSize',10, 'MarkerFaceColor','w')
-text(4.2 ,1, 1.1, 'R', 'color', 'w', 'Interpreter','latex', 'FontSize', 14)
+text(4.2 ,1, 400, 'R', 'color', 'w', 'Interpreter','latex', 'FontSize', 14)
 
 % Real source
 scatter3(1,2, 400,150, 'k','filled', 'o', 'markerfacealpha', 1)

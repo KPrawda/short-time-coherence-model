@@ -16,7 +16,8 @@ for itIR = 1:numIR
 
         T = time_cor(m);
         cor = meas_cor(m,itIR,itBands);
-        snr = ones(size(snr_cor(m,itIR,itBands)));
+        % snr = ones(size(snr_cor(m,itIR,itBands))); %for simulations
+        snr = snr_cor(m,itIR,itBands);
         F = fb(itBands);
 
         % l1 loss

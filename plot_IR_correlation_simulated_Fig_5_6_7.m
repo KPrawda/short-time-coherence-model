@@ -38,7 +38,7 @@ for bandIt = 1:numel(bandCenters)
 
     [cor, energy, r_snr_temp, e_ref] = slidingCorrelation(rir_band_ref, rir_band_other, winLen);
     
-    r_snr(:,:,bandIt) = r_snr_temp.^2;
+    r_snr(:,:,bandIt) = ones(size(r_snr_temp)); % simulations have no noise
     meas_energy(:,:,bandIt) = energy;
     meas_cor(:,:,bandIt) = cor.^2;
     meas_energy_ref(:,:,bandIt) = e_ref;

@@ -19,6 +19,7 @@ for itIR = 1:numIR
         % snr = ones(size(snr_cor(m,itIR,itBands))); %for simulations
         snr = snr_cor(m,itIR,itBands);
         F = fb(itBands);
+        
 
         % l1 loss
         loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor));
@@ -26,11 +27,12 @@ for itIR = 1:numIR
         % do the fitting in log(volatility) for better scaling
         volatilityMin = -50;
         volatilityMax = -3;
-        options = optimset('TolX',0.01);
+        options = optimset('TolX',0.01,'Display','iter');
         %%
-        vol = exp(fminbnd(loss_fun,volatilityMin,volatilityMax,options));
+        [vol, fval] = fminbnd(loss_fun,volatilityMin,volatilityMax,options);
+        fval
         %%
-        volatility(itIR,itBands) = vol;    
+        volatility(itIR,itBands) = exp(vol);    
        
     end
 end

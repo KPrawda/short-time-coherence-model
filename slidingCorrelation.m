@@ -1,4 +1,4 @@
-function [r_corr, e_sig, r_snr, e_ref, e_mean] = slidingCorrelation(irRef, ir, winLen)
+function [r_corr, e_sig, r_snr, e_ref, e_mean, r_cov] = slidingCorrelation(irRef, ir, winLen)
 %% calculate the RIR coherence 
 % % Input:
 % % - irRef = reference RIR

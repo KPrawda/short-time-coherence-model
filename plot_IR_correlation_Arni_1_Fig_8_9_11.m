@@ -54,7 +54,7 @@ for bandIt = 1:numel(bandCenters)
     rir_band_ref = rir_band(:,referenceRIR);
     rir_band_other = rir_band; rir_band_other(:,referenceRIR) = [];
 
-    [cor, energy, r_snr_temp, e_ref] = slidingCorrelation(rir_band_ref, rir_band_other, winLen);
+    [cor, energy, r_snr_temp, e_ref, r_cov] = slidingCorrelation(rir_band_ref, rir_band_other, winLen);
     
     r_snr(:,:,bandIt) = r_snr_temp;
     meas_energy(:,:,bandIt) = energy;
@@ -204,82 +204,3 @@ lgd.Title.String = [ {'Time between measurements'}];
 set(f,'Units','Inches');
 set(f,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[f.Position(3), f.Position(4)])
 % print(f,'corr_coef_Arni','-dpdf','-r0')
-%% find divergence
-function [volatility] = findVolatility(time_cor, meas_cor, mask, snr_cor, fb)
-% Fit the volatility 
-% Input:
-% - time_cor = time in seconds of meas_cor
-% - meas_cor = measured correlation between measurements
-% - mask = high energy region
-% - snr_cor = expected correlation based on SNR
-% - fb = center frequencies
-
-[numT, numIR, numBands] = size(meas_cor);
-volatility = zeros(numIR,numBands);
-
-for itIR = 1:numIR
-    for itBands = 1:numBands
-        m = mask(:,itBands);
-
-        T = time_cor(m);
-        cor = meas_cor(m,itIR,itBands);
-        snr = snr_cor(m,itIR,itBands);
-        F = fb(itBands);
-
-        % l1 loss
-        loss_fun = @(volatility) sum(abs(correlationModel(F,T,exp(volatility)).*snr - cor)); % eq. (19) from the paper
-
-        % do the fitting in log(volatility) for better scaling
-        volatilityMin = -50;
-        volatilityMax = -3;
-        options = optimset('TolX',0.01);
-        vol = exp(fminbnd(loss_fun,volatilityMin,volatilityMax,options));
-
-        volatility(itIR,itBands) = vol;
-    end
-end
-end
-
-%% correlation model
-function [pred_cor,pred_toastd] = correlationModel(F,T,volatility)
-    magicFactor = 20;
-    pred_cor = exp( - magicFactor * (F .* sqrt(T)*volatility).^2 ); % eq. (14) from the paper    
-    pred_toastd = T*volatility;
-end
-
-
-%% sliding correlation
-function [r_corr, e_sig, r_snr, e_ref] = slidingCorrelation(irRef, ir, winLen)
-
-num_rirs = size(ir,2);
-
-% estimate noise level
-noise = ir(round(0.9*end):end,:);
-noiseLevel = sqrt(mean(noise.^2));
-
-disp(noiseLevel)
-
-% compute correlation
-mov = @(x) movsum(x,winLen)./winLen;
-
-% win = hann(winLen);
-win = rectwin(winLen);
-% win = blackman(winLen);
-win = win / sum(win);
-mov = @(x) conv(x,win,'same');
-
-for it = 1:num_rirs
-    r_cov(:,it) = mov(irRef.*ir(:,it)); % numerator of eq. (2)
-    e_sig(:,it) = mov(ir(:,it).^2);
-end
-e_ref =  mov(irRef.^2);
-r_corr = r_cov./sqrt(e_sig.*e_ref);     % eq. (2)
-
-% estimate rir energy
-e_rir = e_sig - noiseLevel.^2 * 1;
-
-% SNR-based correlation
-r_snr = e_rir ./ e_sig;                 % eq. (4)
-
-
-end

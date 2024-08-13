@@ -2,10 +2,26 @@
  
 Complementary code for the publication "Short-time Coherence Between Repeated Room Impulse Response Measurements" by K. Prawda, S. J. Schlecht, and V. Välimäki, submitted to the Journal of the Acoustical Society of America on 22.03.2024
 
-**Abstract: **
+
+
+**Abstract:**
 
 Room impulse responses (RIRs) vary over time due to fluctuations in atmospheric temperature, humidity, and pressure. This can introduce uncertainties in room transfer-function measurements, which are challenging to account for. Previous methods of identification and compensation of time variance focus on systematic atmospheric changes and do not apply to subtle discrepancies in RIRs. In this work, we address this problem by proposing a model of short-time coherence between repeated RIR measurements as an indicator of time-frequency similarity and as a measure of time-variance-induced changes in RIRs. Atmospheric changes cause fluctuation in sound speed, which, in turn, results in variation in the time-of-arrival of sound reflections following a Generalized Wiener process. We show that the short-time coherence decreases exponentially with the reflection-path length and propose volatility as a single model parameter determining the coherence decay rate. The proposed model is validated on simulations and measurements, showing applicability in indoor scenarios. The method reliably estimates volatility of $10^{-6}\textrm{s}/\sqrt{\textrm{s}}$ as measured under laboratory conditions. We exemplify the utility of short-time coherence loss by predicting the high-frequency energy loss stemming from RIR averaging. The proposed method is useful in assessing the uncertainty of RIR measurements, especially when repeated measurements are compared or averaged.
 
 
 
+
+
 The codes reproduce all the figures from the paper
+
+
+**Cite as:**
+@article{prawda2024_coherence,
+author = {Prawda, Karolina  and Schlecht, Sebastian J.  and Välimäki, Vesa},
+title = {Short-time Coherence Between Repeated Room Impulse Response Measurements},
+journal = {J. Acoust. Soc. Am.},
+volume = { },
+number = { },
+pages = { },
+year = {2024},
+doi = { }}
